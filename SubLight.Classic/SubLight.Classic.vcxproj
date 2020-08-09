@@ -81,6 +81,20 @@
       <Project>{3f9de5f8-b7ec-4bdf-8214-0ba3c535ff41}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="Skeleton_Strings.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="Skeleton_Strings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SkeletonPiPL.r" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SkeletonPiPL.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
