@@ -1,0 +1,3 @@
+[submodule "AEResources"]
+	path = AEResources
+	url = https://github.com/HeavyWork/AEResources.git
