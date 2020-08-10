@@ -42,6 +42,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="SubLight.Classic.PiPL.r" />
+    <CustomBuild Include="SubLight.Classic.PiPL.r">
+      <Filter>资源文件</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
