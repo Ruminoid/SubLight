@@ -1,4 +1,4 @@
-#include "AEConfig.h"
+﻿#include "AEConfig.h"
 #include "AE_EffectVers.h"
 
 #ifndef AE_OS_WIN
@@ -13,11 +13,11 @@ resource 'PiPL' (16000) {
 		},
 		/* [2] */
 		Name {
-			"Skeleton"
+			"R SubLight Classic"
 		},
 		/* [3] */
 		Category {
-			"Sample Plug-ins"
+			"Ruminoid"
 		},
 #ifdef AE_OS_WIN
 	#ifdef AE_PROC_INTELx64
@@ -60,7 +60,7 @@ resource 'PiPL' (16000) {
 		},
 		/* [11] */
 		AE_Effect_Match_Name {
-			"ADBE Skeleton"
+			"R SubLight Classic"
 		},
 		/* [12] */
 		AE_Reserved_Info {
