@@ -1,3 +1,6 @@
 [submodule "AEResources"]
 	path = AEResources
 	url = https://github.com/HeavyWork/AEResources.git
+[submodule "RenderCore"]
+	path = RenderCore
+	url = https://github.com/Ruminoid/RenderCore.git
