@@ -45,10 +45,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(ProjectDir)..\RenderCore;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\RenderCore\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(ProjectDir)..\RenderCore;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\RenderCore\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
