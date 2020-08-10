@@ -21,6 +21,12 @@
     <ClCompile Include="SubLight.Classic.Strings.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\AEResources\Util\AEGP_SuiteHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AEResources\Util\MissingSuiteError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SubLight.Classic.h">

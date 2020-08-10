@@ -184,14 +184,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SubLight.Classic.cpp" />
-    <ClCompile Include="SubLight.Classic.Strings.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SubLight.Classic.h" />
-    <ClInclude Include="SubLight.Classic.Strings.h" />
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="SubLight.Classic.PiPL.r">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compiling the PiPL</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling the PiPL</Message>
@@ -211,6 +203,16 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SubLight.Classic.PiPL.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SubLight.Classic.h" />
+    <ClInclude Include="SubLight.Classic.Strings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AEResources\Util\AEGP_SuiteHandler.cpp" />
+    <ClCompile Include="..\AEResources\Util\MissingSuiteError.cpp" />
+    <ClCompile Include="SubLight.Classic.cpp" />
+    <ClCompile Include="SubLight.Classic.Strings.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
