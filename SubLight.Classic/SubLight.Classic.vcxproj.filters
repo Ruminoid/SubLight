@@ -15,27 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Skeleton.cpp">
+    <ClCompile Include="SubLight.Classic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Skeleton_Strings.cpp">
+    <ClCompile Include="SubLight.Classic.Strings.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Skeleton.h">
+    <ClInclude Include="SubLight.Classic.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Skeleton_Strings.h">
+    <ClInclude Include="SubLight.Classic.Strings.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SkeletonPiPL.r" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="SkeletonPiPL.rc">
+    <ResourceCompile Include="SubLight.Classic.PiPL.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="SubLight.Classic.PiPL.r" />
   </ItemGroup>
 </Project>

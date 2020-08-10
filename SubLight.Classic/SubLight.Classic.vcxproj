@@ -182,11 +182,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AEResources\AEResources.vcxproj">
-      <Project>{3f9de5f8-b7ec-4bdf-8214-0ba3c535ff41}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="SubLight.Classic.cpp" />
     <ClCompile Include="SubLight.Classic.Strings.cpp" />
   </ItemGroup>
