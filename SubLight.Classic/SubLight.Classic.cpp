@@ -129,10 +129,10 @@ static PF_Err ParamsSetup(
 	AEFX_CLR_STRUCT(def);
 
 	PF_ADD_FLOAT_SLIDER(STR(StrID_Params_Stretch_Name),
-	                    -100,
-	                    100,
-	                    -100,
-	                    100,
+	                    -50,
+	                    50,
+	                    -50,
+	                    50,
 	                    AEFX_AUDIO_DEFAULT_CURVE_TOLERANCE,
 	                    1,
 	                    1,
