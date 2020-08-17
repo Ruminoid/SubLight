@@ -245,13 +245,17 @@ static PF_Err SequenceFlatten(
 	// Flatten Data
 
 	size_t len = sequence_data->len;
+	char* tmp = new char[len];
+
+	memcpy(tmp, sequence_data->dataStringP, len);
 	
+	PF_UNLOCK_HANDLE(in_data->sequence_data);
+	PF_DISPOSE_HANDLE(in_data->sequence_data);
+
 	out_data->sequence_data = PF_NEW_HANDLE(len);
 
 	char* target = *reinterpret_cast<char**>(out_data->sequence_data);
-	memcpy(target, sequence_data->dataStringP, len);
-
-	PF_UNLOCK_HANDLE(in_data->sequence_data);
+	memcpy(target, tmp, len);
 
 	return SequenceSetDown(in_data);
 }
