@@ -221,7 +221,6 @@ static PF_Err SequenceSetDown(
 			ass_free_track(sequence_data->trackP);
 		if (sequence_data->dataStringP)
 			delete[] sequence_data->dataStringP;
-		delete sequence_data;
 	}
 
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
@@ -251,6 +250,13 @@ static PF_Err SequenceFlatten(
 	char* tmp = new char[len];
 
 	memcpy(tmp, sequence_data->dataStringP, len);
+
+	if (sequence_data->rendererP)
+		ass_renderer_done(sequence_data->rendererP);
+	if (sequence_data->trackP)
+		ass_free_track(sequence_data->trackP);
+	if (sequence_data->dataStringP)
+		delete[] sequence_data->dataStringP;
 	
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
 	PF_DISPOSE_HANDLE(in_data->sequence_data);
@@ -260,7 +266,7 @@ static PF_Err SequenceFlatten(
 	char* target = *reinterpret_cast<char**>(out_data->sequence_data);
 	memcpy(target, tmp, len);
 
-	return SequenceSetDown(in_data);
+	return PF_Err_NONE;
 }
 
 #pragma endregion
