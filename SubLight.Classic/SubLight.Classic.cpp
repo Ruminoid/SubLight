@@ -44,10 +44,10 @@ static PF_Err GlobalSetup(
 	if (out_data->global_data)
 		PF_DISPOSE_HANDLE(out_data->global_data);
 
-	out_data->global_data = PF_NEW_HANDLE(sizeof(AssLibraryP));
+	out_data->global_data = PF_NEW_HANDLE(sizeof(GlobalData));
 
-	AssLibraryP ass_library = *reinterpret_cast<AssLibraryH>(out_data->global_data);
-	ass_library = ass_library_init();
+	GlobalDataP global_data = *reinterpret_cast<GlobalDataH>(out_data->global_data);
+	global_data->assLibraryP = ass_library_init();
 
 	return PF_Err_NONE;
 }
@@ -55,10 +55,11 @@ static PF_Err GlobalSetup(
 static PF_Err GlobalSetDown(
 	PF_InData* in_data)
 {
-	AssLibraryP assLibrary = static_cast<AssLibraryP>(PF_LOCK_HANDLE(in_data->global_data));
-	if (!assLibrary) return PF_Err_NONE;
-	
-	ass_library_done(assLibrary);
+	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
+	if (!global_data) return PF_Err_NONE;
+
+	if (global_data->assLibraryP)
+		ass_library_done(global_data->assLibraryP);
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 	PF_DISPOSE_HANDLE(in_data->global_data);
@@ -156,8 +157,8 @@ static PF_Err SequenceSetup(
 	PF_InData* in_data, // String Data
 	PF_OutData* out_data) // Sequence Data
 {
-	AssLibraryP ass_library = static_cast<AssLibraryP>(PF_LOCK_HANDLE(in_data->global_data));
-	if (!ass_library) return PF_Err_NONE;
+	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
+	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
 
 	char* data_string = nullptr;
 	size_t len = 0;
@@ -186,14 +187,14 @@ static PF_Err SequenceSetup(
 	SequenceDataP sequence_data = *reinterpret_cast<SequenceDataH>(out_data->sequence_data);
 	if (!sequence_data) return PF_Err_NONE;
 	
-	sequence_data->rendererP = ass_renderer_init(ass_library);
+	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
 	if (!sequence_data->rendererP) return PF_Err_NONE;
 	
 	ass_set_frame_size(sequence_data->rendererP, in_data->width, in_data->height);
 	ass_set_font_scale(sequence_data->rendererP, 1.);
 	ass_set_fonts(sequence_data->rendererP, nullptr, "Sans", 1, nullptr, true);
 	ass_set_cache_limits(sequence_data->rendererP, 512, 32);
-	sequence_data->trackP = ass_read_memory(ass_library, data_string, len, nullptr);
+	sequence_data->trackP = ass_read_memory(global_data->assLibraryP, data_string, len, nullptr);
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
@@ -368,8 +369,8 @@ UserChangedParam(
 		// Replace ASS Track
 
 		if (!in_data->global_data) return PF_Err_NONE;
-		AssLibraryP ass_library = static_cast<AssLibraryP>(PF_LOCK_HANDLE(in_data->global_data));
-		if (!ass_library) return PF_Err_NONE;
+		GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
+		if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
 
 		if (!in_data->sequence_data) return PF_Err_NONE;
 		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
@@ -378,7 +379,7 @@ UserChangedParam(
 		if (sequence_data->trackP)
 			ass_free_track(sequence_data->trackP);
 
-		sequence_data->trackP = ass_read_memory(ass_library, data_string, len, nullptr);
+		sequence_data->trackP = ass_read_memory(global_data->assLibraryP, data_string, len, nullptr);
 		sequence_data->dataStringP = data_string;
 		sequence_data->len = len;
 

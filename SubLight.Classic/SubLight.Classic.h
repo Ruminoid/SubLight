@@ -74,6 +74,11 @@ enum {
 
 typedef ASS_Library AssLibrary, * AssLibraryP, ** AssLibraryH;
 
+typedef struct GlobalData
+{
+	AssLibraryP assLibraryP;
+} GlobalData, * GlobalDataP, ** GlobalDataH;
+
 typedef struct SequenceData
 {
 	char*			dataStringP		=	nullptr;
