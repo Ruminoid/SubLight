@@ -1,28 +1,14 @@
 ﻿#include "SubLight.Classic.h"
 
 #include <atlstr.h>
-#include <filesystem>
-#include <fstream>
 #include <ShObjIdl.h>
-#include <string>
+#include <cstdio>
 #include <wchar.h>
 #include <Windows.h>
 
 #pragma region Add Windows Controls
 
 #pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
-#pragma endregion
-
-#pragma region Const Data
-
-// FLAT_EXTRA_SIZE: 1
-//
-// Example: auto size = len + FLAT_EXTRA_SIZE;
-// We need to add '\0' to our string data
-// to store it, correctly reload it and
-// re-convert it to char*.
-const int FLAT_EXTRA_SIZE = 1;
 
 #pragma endregion
 
@@ -180,11 +166,10 @@ static PF_Err SequenceSetup(
 	{
 		// Re-setup - Reload string data
 
-		size_t size = PF_GET_HANDLE_SIZE(in_data->sequence_data);
-		data_string = new char[size];
-		len = size - FLAT_EXTRA_SIZE;
+		size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
+		data_string = new char[len];
 		const char* source = static_cast<const char*>(PF_LOCK_HANDLE(in_data->sequence_data));
-		strcpy_s(data_string, len, source);
+		memcpy(data_string, source, len);
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
 		PF_DISPOSE_HANDLE(in_data->sequence_data);
 	}
@@ -258,12 +243,12 @@ static PF_Err SequenceFlatten(
 
 	// Flatten Data
 
-	size_t size = sequence_data->len + FLAT_EXTRA_SIZE;
+	size_t len = sequence_data->len;
 	
-	out_data->sequence_data = PF_NEW_HANDLE(size);
+	out_data->sequence_data = PF_NEW_HANDLE(len);
 
 	char* target = *reinterpret_cast<char**>(out_data->sequence_data);
-	strcpy_s(target, size, sequence_data->dataStringP);
+	memcpy(target, sequence_data->dataStringP, len);
 
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
 
@@ -360,11 +345,21 @@ UserChangedParam(
 		
 		// Read File
 
-		uintmax_t len = std::filesystem::file_size(file_path);
+		//uintmax_t len = std::filesystem::file_size(file_path);
+		//char* data_string = new char[len];
+		//std::ifstream ifs(file_path);
+		//delete[] file_path;
+		//ifs.read(data_string, len);
+
+		FILE* fp = fopen("file.txt", "r");
+		if (fp == nullptr) return PF_Err_NONE;
+		fseek(fp, 0, SEEK_END);
+
+		const int len = ftell(fp);
 		char* data_string = new char[len];
-		std::ifstream ifs(file_path);
-		delete[] file_path;
-		ifs.read(data_string, len);
+
+		fread(data_string, len, 1, fp);
+		fclose(fp);
 
 		// Replace ASS Track
 
