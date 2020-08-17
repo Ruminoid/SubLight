@@ -167,7 +167,7 @@ static PF_Err SequenceSetup(
 	{
 		// Re-setup - Reload string data
 
-		size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
+		len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
 		data_string = new char[len];
 		const char* source = static_cast<const char*>(PF_LOCK_HANDLE(in_data->sequence_data));
 		memcpy(data_string, source, len);
