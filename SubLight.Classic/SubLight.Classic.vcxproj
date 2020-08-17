@@ -45,13 +45,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(ProjectDir)..\RenderCore;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\RenderCore\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(ProjectDir)..\RenderCore;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\RenderCore\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\AEResources\Headers\adobesdk\drawbotsuite;$(ProjectDir)..\AEResources\Headers\adobesdk\config;$(ProjectDir)..\AEResources\Headers\adobesdk;$(ProjectDir)..\AEResources\Headers\SP;$(ProjectDir)..\AEResources\Headers\Win;$(ProjectDir)..\AEResources\Util;$(ProjectDir)..\AEResources\Headers;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
@@ -99,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <ConformanceMode>true</ConformanceMode>
       <SDLCheck>true</SDLCheck>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
