@@ -196,6 +196,9 @@ static PF_Err SequenceSetup(
 	ass_set_cache_limits(sequence_data->rendererP, 512, 32);
 	sequence_data->trackP = ass_read_memory(global_data->assLibraryP, data_string, len, nullptr);
 
+	sequence_data->dataStringP = data_string;
+	sequence_data->len = len;
+
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
 	return PF_Err_NONE;
