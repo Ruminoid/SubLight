@@ -351,13 +351,17 @@ UserChangedParam(
 		//delete[] file_path;
 		//ifs.read(data_string, len);
 
-		FILE* fp = fopen("file.txt", "r");
+		FILE* fp;
+		if (fopen_s(&fp, file_path, "r")) return PF_Err_NONE;
+		delete[] file_path;
+		
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
 
 		const int len = ftell(fp);
 		char* data_string = new char[len];
 
+		fseek(fp, 0, SEEK_SET);
 		fread(data_string, len, 1, fp);
 		fclose(fp);
 
