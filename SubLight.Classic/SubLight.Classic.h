@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef SUBLIGHT_CLASSIC_H
-#define SUBLIGHT_CLASSIC_H
+#ifndef R_SUBLIGHT_CLASSIC_H
+#define R_SUBLIGHT_CLASSIC_H
 
 typedef unsigned char		u_char;
 typedef unsigned short		u_short;
@@ -11,9 +11,9 @@ typedef short int			int16;
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
 
-#define PF_DEEP_COLOR_AWARE 1	// make sure we get 16bpc pixels; 
+#define PF_DEEP_COLOR_AWARE 0	// make sure we get 16bpc pixels; 
 								// AE_Effect.h checks for this.
-
+ 
 #include "AEConfig.h"
 
 #ifdef AE_OS_WIN
@@ -32,38 +32,55 @@ typedef short int			int16;
 #include "AEFX_ChannelDepthTpl.h"
 #include "AEGP_SuiteHandler.h"
 
+#include "ass.h"
+
 #include "SubLight.Classic.Strings.h"
+
+// Utils
+
+void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, unsigned char* src, int src_stride, int dst_x, int dst_y, int src_w, int src_h);
 
 /* Versioning information */
 
-#define	MAJOR_VERSION	1
-#define	MINOR_VERSION	0
-#define	BUG_VERSION		0
-#define	STAGE_VERSION	PF_Stage_DEVELOP
-#define	BUILD_VERSION	1
-
-
-/* Parameter defaults */
-
-#define	SKELETON_GAIN_MIN		0
-#define	SKELETON_GAIN_MAX		100
-#define	SKELETON_GAIN_DFLT		10
+#define	MAJOR_VERSION	0
+#define	MINOR_VERSION	2
+#define	BUG_VERSION		5
+#define	STAGE_VERSION	PF_Stage_BETA
+#define	BUILD_VERSION	8
 
 enum {
 	SKELETON_INPUT = 0,
-	SKELETON_GAIN,
-	SKELETON_COLOR,
-	SKELETON_NUM_PARAMS
+	R_SUBLIGHT_CLASSIC_PARAMS_OPEN,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_START,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_END,
+	R_SUBLIGHT_CLASSIC_PARAMS_TIME_GROUP_START,
+	R_SUBLIGHT_CLASSIC_PARAMS_OFFSET,
+	R_SUBLIGHT_CLASSIC_PARAMS_STRETCH,
+	R_SUBLIGHT_CLASSIC_PARAMS_TIME_GROUP_END,
+	R_SUBLIGHT_CLASSIC_NUM_PARAMS
 };
 
 enum {
-	GAIN_DISK_ID = 1,
-	COLOR_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_OPEN_DISK_ID = 1,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_START_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_END_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_TIME_GROUP_START_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_OFFSET_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_STRETCH_DISK_ID,
+	R_SUBLIGHT_CLASSIC_PARAMS_TIME_GROUP_END_DISK_ID,
 };
 
-typedef struct GainInfo{
-	PF_FpLong	gainF;
-} GainInfo, *GainInfoP, **GainInfoH;
+typedef ASS_Library AssLibrary, * AssLibraryP, ** AssLibraryH;
+
+typedef struct SequenceData
+{
+	char*			dataStringP		=	nullptr;
+	size_t			len				=	0;
+	ASS_Track*		trackP			=	nullptr;
+	ASS_Renderer	*rendererP		=	nullptr;
+} SequenceData, * SequenceDataP, ** SequenceDataH;
 
 #ifdef __cplusplus
 	extern "C" {
@@ -82,4 +99,4 @@ EntryPointFunc(
 }
 #endif
 
-#endif // SKELETON_H
+#endif

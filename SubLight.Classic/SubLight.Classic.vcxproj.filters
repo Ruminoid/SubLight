@@ -27,6 +27,9 @@
     <ClCompile Include="..\AEResources\Util\MissingSuiteError.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SubLight.Classic.Blend.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SubLight.Classic.h">

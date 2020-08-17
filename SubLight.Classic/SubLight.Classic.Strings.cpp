@@ -9,10 +9,14 @@ typedef struct {
 
 TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_NONE,						"",
-	StrID_Name,						"Skeleton",
-	StrID_Description,				"An empty (skeletal, if you will) effect sample,\r for your modifying pleasure.\rCopyright 2007 Adobe Systems Incorporated.",
-	StrID_Gain_Param_Name,			"Gain",
-	StrID_Color_Param_Name,			"Color",
+	StrID_Name,						"R SubLight Classic",
+	StrID_Description,				"Load and render subtitles in Adobe softwares.",
+	StrID_Params_Subtitle_Name,		"Subtitle",
+	StrID_Params_Open_Button_Name,	"Open",
+	StrID_Params_Render_Name,		"Render",
+	StrID_Params_Time_Name,			"Time",
+	StrID_Params_Offset_Name,		"Offset",
+	StrID_Params_Stretch_Name,		"Stretch"
 };
 
 
