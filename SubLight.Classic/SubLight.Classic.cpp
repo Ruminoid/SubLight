@@ -406,7 +406,8 @@ static PF_Err Render(
 {
 	if (!in_data->sequence_data) return PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
-	if (!sequence_data || !sequence_data->dataStringP) return PF_Err_NONE;
+	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
+		return PF_Err_NONE;
 
 	// Initialize Data
 
