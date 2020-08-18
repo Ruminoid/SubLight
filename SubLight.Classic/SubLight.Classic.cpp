@@ -176,7 +176,7 @@ static PF_Err SequenceSetup(
 	}
 	else
 	{
-		data_string = new char[1]{ '\0' };
+		data_string = new char[1]{ '\0' }; // TODO: Check why seqData is nullptr during the second call
 	}
 
 	if (!data_string) return PF_Err_NONE;
@@ -505,6 +505,14 @@ DllExport PF_Err EntryPointFunc(
 		case PF_Cmd_SEQUENCE_FLATTEN:
 
 			err = SequenceFlatten(in_data, out_data);
+			break;
+
+		case PF_Cmd_USER_CHANGED_PARAM:
+
+			err = UserChangedParam(in_data,
+				out_data,
+				params,
+				static_cast<const PF_UserChangedParamExtra*>(extra));
 			break;
 
 		case PF_Cmd_PARAMS_SETUP:
