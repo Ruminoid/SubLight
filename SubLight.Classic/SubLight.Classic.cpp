@@ -1,5 +1,6 @@
 ﻿#include "SubLight.Classic.h"
 
+#include <atlconv.h>
 #include <atlstr.h>
 #include <ShObjIdl.h>
 #include <cstdio>
@@ -314,24 +315,27 @@ static char* BasicFileOpen()
 	hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
 	if (FAILED(hr)) return nullptr;
 	USES_CONVERSION;
-	int len = WideCharToMultiByte(CP_OEMCP,
-	                              0,
-	                              pszFilePath,
-	                              wcslen(pszFilePath),
-	                              nullptr,
-	                              0,
-	                              NULL,
-	                              NULL);
-	char* result = new char[len + 1];
-	WideCharToMultiByte(CP_OEMCP,
-	                    0,
-	                    pszFilePath,
-	                    wcslen(pszFilePath),
-	                    result,
-	                    len,
-	                    nullptr,
-	                    NULL);
+	//int len = WideCharToMultiByte(CP_OEMCP,
+	//                              0,
+	//                              pszFilePath,
+	//                              wcslen(pszFilePath),
+	//                              nullptr,
+	//                              0,
+	//                              NULL,
+	//                              NULL);
+	//char* result = new char[len + 1];
+	//WideCharToMultiByte(CP_OEMCP,
+	//                    0,
+	//                    pszFilePath,
+	//                    wcslen(pszFilePath),
+	//                    result,
+	//                    len,
+	//                    nullptr,
+	//                    NULL);
 	//delete[] pszFilePath;
+
+	char* result = W2A(pszFilePath);
+	
 	psiResult->Release();
 	pfd->Release();
 	return result;
