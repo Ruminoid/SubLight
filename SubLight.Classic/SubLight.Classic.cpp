@@ -12,6 +12,12 @@
 
 #pragma endregion
 
+#pragma region Const Data
+
+const char* DEFAULT_DATA_STRING = "[Script Info]";
+
+#pragma endregion
+
 #pragma region About & GlobalSetup
 
 static PF_Err About(
@@ -241,7 +247,8 @@ static PF_Err SequenceSetup(
 		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
 		if (!sequence_data->rendererP) return PF_Err_NONE;
 
-		InitializeSequenceData(sequence_data, global_data->assLibraryP, nullptr, 0, in_data->width, in_data->height);
+		InitializeSequenceData(sequence_data, global_data->assLibraryP, const_cast<char*>(DEFAULT_DATA_STRING),
+		                       strlen(DEFAULT_DATA_STRING), in_data->width, in_data->height);
 
 		PF_UNLOCK_HANDLE(out_data->sequence_data);
 
