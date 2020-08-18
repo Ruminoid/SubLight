@@ -331,7 +331,7 @@ static char* BasicFileOpen()
 	                    len,
 	                    nullptr,
 	                    NULL);
-	delete[] pszFilePath;
+	//delete[] pszFilePath;
 	psiResult->Release();
 	pfd->Release();
 	return result;
