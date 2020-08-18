@@ -385,8 +385,8 @@ UserChangedParam(
 		GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
 		if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
 
-		if (!in_data->sequence_data) return PF_Err_NONE;
-		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
+		if (!out_data->sequence_data) return PF_Err_NONE;
+		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 		if (!sequence_data) return PF_Err_NONE;
 
 		if (sequence_data->trackP)
@@ -396,7 +396,7 @@ UserChangedParam(
 		sequence_data->dataStringP = data_string;
 		sequence_data->len = len;
 
-		PF_UNLOCK_HANDLE(in_data->sequence_data);
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
 		PF_UNLOCK_HANDLE(in_data->global_data);
 	}
 
@@ -413,8 +413,8 @@ static PF_Err Render(
 	PF_ParamDef* params[],
 	PF_LayerDef* output)
 {
-	if (!in_data->sequence_data) return PF_Err_NONE;
-	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
+	if (!out_data->sequence_data) return PF_Err_NONE;
+	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
 		return PF_Err_NONE;
 
@@ -448,7 +448,7 @@ static PF_Err Render(
 		image = image->next;
 	}
 
-	PF_UNLOCK_HANDLE(in_data->sequence_data);
+	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
 	return PF_Err_NONE;
 }
