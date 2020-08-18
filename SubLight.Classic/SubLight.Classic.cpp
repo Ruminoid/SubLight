@@ -370,7 +370,7 @@ UserChangedParam(
 		//ifs.read(data_string, len);
 
 		FILE* fp;
-		if (fopen_s(&fp, file_path, "r")) return PF_Err_NONE;
+		if (!fopen_s(&fp, file_path, "r")) return PF_Err_NONE;
 		delete[] file_path;
 		
 		if (fp == nullptr) return PF_Err_NONE;
