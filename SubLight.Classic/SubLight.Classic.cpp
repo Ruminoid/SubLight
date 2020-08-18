@@ -1,6 +1,5 @@
 ﻿#include "SubLight.Classic.h"
 
-#include <atlconv.h>
 #include <atlstr.h>
 #include <ShObjIdl.h>
 #include <cstdio>
@@ -279,7 +278,7 @@ const COMDLG_FILTERSPEC c_rgSaveTypes[] =
 	{L"ASS Subtitle (*.ass)", L"*.ass"}
 };
 
-static char* BasicFileOpen()
+static wchar_t* BasicFileOpen()
 {
 	// CoCreate the File Open Dialog object.
 	IFileDialog* pfd = nullptr;
@@ -333,12 +332,12 @@ static char* BasicFileOpen()
 	//                    nullptr,
 	//                    NULL);
 
-	char* result = W2A(pszFilePath);
+	//char* result = W2A(pszFilePath);
 	//delete[] pszFilePath;
 	
 	psiResult->Release();
 	pfd->Release();
-	return result;
+	return pszFilePath;
 }
 
 #pragma endregion
@@ -358,13 +357,14 @@ UserChangedParam(
 	{
 		// Browse File
 		
-		char* file_path = BasicFileOpen();
+		wchar_t* file_path = BasicFileOpen();
 		if (!file_path) return PF_Err_NONE;
 		
 		// Read File
 
 		FILE* fp;
-		if (fopen_s(&fp, file_path, "r")) return PF_Err_NONE;
+		errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
+		if (fille_open_result) return PF_Err_NONE;
 		//delete[] file_path;
 		
 		if (fp == nullptr) return PF_Err_NONE;
