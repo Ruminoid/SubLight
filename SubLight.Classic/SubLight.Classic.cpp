@@ -196,7 +196,7 @@ static PF_Err SequenceSetup(
 
 			size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
 			char* data_string = new char[len];
-			const char* source = static_cast<const char*>(PF_LOCK_HANDLE(in_data->sequence_data));
+			char* source = static_cast<char*>(sequence_source);
 			memcpy(data_string, source, len);
 			PF_UNLOCK_HANDLE(in_data->sequence_data);
 			PF_DISPOSE_HANDLE(in_data->sequence_data);
