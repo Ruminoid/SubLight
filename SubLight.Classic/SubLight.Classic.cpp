@@ -548,6 +548,12 @@ static PF_Err Render(
 	PF_ParamDef* params[],
 	PF_LayerDef* output)
 {
+	// Check Render Switch
+
+	if (!static_cast<bool>(params[R_SUBLIGHT_CLASSIC_PARAMS_RENDER]->u.bd.value)) return PF_Err_NONE;
+
+	// Start Render
+	
 	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData)) return PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
