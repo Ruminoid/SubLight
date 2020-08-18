@@ -48,8 +48,9 @@ static PF_Err GlobalSetup(
 
 	out_data->global_data = PF_NEW_HANDLE(sizeof(GlobalData));
 
-	GlobalDataP global_data = *reinterpret_cast<GlobalDataH>(out_data->global_data);
+	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(out_data->global_data));
 	global_data->assLibraryP = ass_library_init();
+	PF_UNLOCK_HANDLE(out_data->global_data);
 
 	return PF_Err_NONE;
 }
@@ -186,7 +187,7 @@ static PF_Err SequenceSetup(
 	// Initialize Sequence Data
 
 	out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-	SequenceDataP sequence_data = *reinterpret_cast<SequenceDataH>(out_data->sequence_data);
+	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data) return PF_Err_NONE;
 
 	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
@@ -200,6 +201,10 @@ static PF_Err SequenceSetup(
 
 	sequence_data->dataStringP = data_string;
 	sequence_data->len = len;
+
+	PF_UNLOCK_HANDLE(out_data->sequence_data);
+
+	in_data->sequence_data = out_data->sequence_data;
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
@@ -265,8 +270,9 @@ static PF_Err SequenceFlatten(
 
 	out_data->sequence_data = PF_NEW_HANDLE(len);
 
-	char* target = *reinterpret_cast<char**>(out_data->sequence_data);
+	char* target = static_cast<char*>(PF_LOCK_HANDLE(out_data->sequence_data));
 	memcpy(target, tmp, len);
+	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
 	return PF_Err_NONE;
 }
