@@ -256,7 +256,7 @@ static PF_Err SequenceReSetup(
 
 		//out_data->sequence_data = in_data->sequence_data;
 	}
-	else
+	else if (PF_GET_HANDLE_SIZE(in_data->sequence_data))
 	{
 		// Re-setup - Reload string data
 
