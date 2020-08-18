@@ -12,6 +12,8 @@ PF_Pixel* GetPixel(PF_EffectWorld* def, int x, int y)
 
 void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, unsigned char* src, int src_stride, int dst_x, int dst_y, int src_w, int src_h)
 {
+	if (!def || !src) return;
+	
 	auto opacity = 0xFF - (unsigned char)(_a(color));
 	auto r = (unsigned char)(_r(color));
 	auto g = (unsigned char)(_g(color));
@@ -23,6 +25,8 @@ void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, u
 	//unsigned int* dstp = reinterpret_cast<unsigned*>(dst) + size_t(dst_y) * (dst_stride >> 2) + dst_x;
 	
 	PF_Pixel* dstp = GetPixel(def, dst_x, dst_y);
+	if (!dstp) return;
+	
 	unsigned char* srcp = reinterpret_cast<unsigned char*>(src);
 
 	int src_stride2 = src_stride - src_w;

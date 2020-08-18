@@ -136,7 +136,7 @@ static PF_Err ParamsSetup(
 	PF_ADD_CHECKBOX(STR(StrID_Params_Render_Name),
 	                "",
 	                TRUE,
-					PF_ParamFlag_SUPERVISE,
+	                PF_ParamFlag_SUPERVISE,
 	                R_SUBLIGHT_CLASSIC_PARAMS_RENDER_DISK_ID);
 
 	AEFX_CLR_STRUCT(def);
@@ -589,8 +589,9 @@ static PF_Err Render(
 
 	// Start Render
 
-	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData)) return
-		PF_Err_NONE;
+	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData))
+		return
+			PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
 	{
@@ -611,21 +612,27 @@ static PF_Err Render(
 	                                                                ->u.fs_d.value)
 		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 100;
 
-	// Render Image
-
-	ass_set_frame_size(sequence_data->rendererP, width, height);
-	ASS_Image* image = ass_render_frame(sequence_data->rendererP, sequence_data->trackP, time, nullptr);
-
-	// Blend Image
-
-	while (image)
+	try
 	{
-		BlendSingle(
-			output, stride, width, height,
-			image->color,
-			image->bitmap, image->stride, image->dst_x, image->dst_y, image->w, image->h);
+		// Render Image
 
-		image = image->next;
+		ass_set_frame_size(sequence_data->rendererP, width, height);
+		ASS_Image* image = ass_render_frame(sequence_data->rendererP, sequence_data->trackP, time, nullptr);
+
+		// Blend Image
+
+		while (image)
+		{
+			BlendSingle(
+				output, stride, width, height,
+				image->color,
+				image->bitmap, image->stride, image->dst_x, image->dst_y, image->w, image->h);
+
+			image = image->next;
+		}
+	}
+	catch (...)
+	{
 	}
 
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
