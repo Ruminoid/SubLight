@@ -67,7 +67,8 @@ static PF_Err GlobalSetup(
 
 	out_data->out_flags = PF_OutFlag_NON_PARAM_VARY |
 		PF_OutFlag_PIX_INDEPENDENT |
-		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
+		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING |
+		PF_OutFlag_SEND_UPDATE_PARAMS_UI;
 
 	out_data->out_flags2 = PF_OutFlag2_I_AM_THREADSAFE |
 		PF_OutFlag2_AE13_5_THREADSAFE |
@@ -135,7 +136,7 @@ static PF_Err ParamsSetup(
 	PF_ADD_CHECKBOX(STR(StrID_Params_Render_Name),
 	                "",
 	                TRUE,
-	                0,
+					PF_ParamFlag_SUPERVISE,
 	                R_SUBLIGHT_CLASSIC_PARAMS_RENDER_DISK_ID);
 
 	AEFX_CLR_STRUCT(def);
@@ -163,6 +164,8 @@ static PF_Err ParamsSetup(
 	                    1,
 	                    R_SUBLIGHT_CLASSIC_PARAMS_OFFSET_DISK_ID);
 
+	def.flags = PF_ParamFlag_SUPERVISE;
+
 	AEFX_CLR_STRUCT(def);
 
 	PF_ADD_FLOAT_SLIDER(STR(StrID_Params_Stretch_Name),
@@ -176,6 +179,8 @@ static PF_Err ParamsSetup(
 	                    0,
 	                    1,
 	                    R_SUBLIGHT_CLASSIC_PARAMS_STRETCH_DISK_ID);
+
+	def.flags = PF_ParamFlag_SUPERVISE;
 
 	AEFX_CLR_STRUCT(def);
 
