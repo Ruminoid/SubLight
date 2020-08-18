@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <wchar.h>
 #include <Windows.h>
+#include <string>
 
 #pragma region Add Windows Controls
 
@@ -247,8 +248,12 @@ static PF_Err SequenceSetup(
 		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
 		if (!sequence_data->rendererP) return PF_Err_NONE;
 
-		InitializeSequenceData(sequence_data, global_data->assLibraryP, const_cast<char*>(DEFAULT_DATA_STRING),
-		                       strlen(DEFAULT_DATA_STRING), in_data->width, in_data->height);
+		size_t len = strlen(DEFAULT_DATA_STRING);
+		char* data_string = new char[len];
+		memcpy(data_string, DEFAULT_DATA_STRING, len);
+
+		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string,
+		                       len, in_data->width, in_data->height);
 
 		PF_UNLOCK_HANDLE(out_data->sequence_data);
 
