@@ -191,74 +191,25 @@ static PF_Err SequenceSetup(
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
 	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
 
-	// Setup Started
+	// Initialize Sequence Data
 
-	if (in_data->sequence_data && PF_GET_HANDLE_SIZE(in_data->sequence_data))
-	{
-		void* sequence_source = PF_LOCK_HANDLE(in_data->sequence_data);
+	out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
+	if (!sequence_data) return PF_Err_NONE;
 
-		if (*static_cast<char*>(sequence_source) == '[')
-		{
-			// Re-setup - Reload string data
+	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
+	if (!sequence_data->rendererP) return PF_Err_NONE;
 
-			size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
-			char* data_string = new char[len];
-			char* source = static_cast<char*>(sequence_source);
-			memcpy(data_string, source, len);
-			PF_UNLOCK_HANDLE(in_data->sequence_data);
-			PF_DISPOSE_HANDLE(in_data->sequence_data);
+	size_t len = strlen(DEFAULT_DATA_STRING);
+	char* data_string = new char[len];
+	memcpy(data_string, DEFAULT_DATA_STRING, len);
 
-			if (!data_string) return PF_Err_NONE;
+	InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string,
+		len, in_data->width, in_data->height);
 
-			// Unflat - Initialize Sequence Data
+	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
-			out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-			SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-			if (!sequence_data) return PF_Err_NONE;
-
-			sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
-			if (!sequence_data->rendererP) return PF_Err_NONE;
-
-			InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
-			                       in_data->height);
-
-			PF_UNLOCK_HANDLE(out_data->sequence_data);
-
-			in_data->sequence_data = out_data->sequence_data;
-		}
-		else
-		{
-			// Use Existing Sequence Data
-
-			//SequenceDataP sequence_data = static_cast<SequenceDataP>(sequence_source);
-
-			PF_UNLOCK_HANDLE(in_data->sequence_data);
-
-			out_data->sequence_data = in_data->sequence_data;
-		}
-	}
-	else
-	{
-		// Initialize Sequence Data
-
-		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-		if (!sequence_data) return PF_Err_NONE;
-
-		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
-		if (!sequence_data->rendererP) return PF_Err_NONE;
-
-		size_t len = strlen(DEFAULT_DATA_STRING);
-		char* data_string = new char[len];
-		memcpy(data_string, DEFAULT_DATA_STRING, len);
-
-		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string,
-		                       len, in_data->width, in_data->height);
-
-		PF_UNLOCK_HANDLE(out_data->sequence_data);
-
-		in_data->sequence_data = out_data->sequence_data;
-	}
+	in_data->sequence_data = out_data->sequence_data;
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
@@ -294,7 +245,52 @@ static PF_Err SequenceReSetup(
 	PF_InData* in_data, // String Data
 	PF_OutData* out_data) // Sequence Data
 {
-	return SequenceSetup(in_data, out_data);
+	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
+	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
+	
+	void* sequence_source = PF_LOCK_HANDLE(in_data->sequence_data);
+
+	if (*static_cast<char*>(sequence_source) == '[')
+	{
+		// Re-setup - Reload string data
+
+		size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
+		char* data_string = new char[len];
+		char* source = static_cast<char*>(sequence_source);
+		memcpy(data_string, source, len);
+		PF_UNLOCK_HANDLE(in_data->sequence_data);
+		PF_DISPOSE_HANDLE(in_data->sequence_data);
+
+		if (!data_string) return PF_Err_NONE;
+
+		// Unflat - Initialize Sequence Data
+
+		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
+		if (!sequence_data) return PF_Err_NONE;
+
+		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
+		if (!sequence_data->rendererP) return PF_Err_NONE;
+
+		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
+			in_data->height);
+
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
+
+		in_data->sequence_data = out_data->sequence_data;
+	}
+	else
+	{
+		// Use Existing Sequence Data
+
+		//SequenceDataP sequence_data = static_cast<SequenceDataP>(sequence_source);
+
+		PF_UNLOCK_HANDLE(in_data->sequence_data);
+
+		out_data->sequence_data = in_data->sequence_data;
+	}
+
+	PF_UNLOCK_HANDLE(in_data->global_data);
 }
 
 static PF_Err SequenceFlatten(
