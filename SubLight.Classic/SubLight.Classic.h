@@ -81,10 +81,10 @@ typedef struct GlobalData
 
 typedef struct SequenceData
 {
+	ASS_Track*		trackP			=	nullptr;
+	ASS_Renderer*	rendererP		=	nullptr;
 	char*			dataStringP		=	nullptr;
 	size_t			len				=	0;
-	ASS_Track*		trackP			=	nullptr;
-	ASS_Renderer	*rendererP		=	nullptr;
 } SequenceData, * SequenceDataP, ** SequenceDataH;
 
 #ifdef __cplusplus
