@@ -39,7 +39,9 @@ static PF_Err GlobalSetup(
 	                                  STAGE_VERSION,
 	                                  BUILD_VERSION);
 
-	out_data->out_flags = PF_OutFlag_NONE;
+	out_data->out_flags = PF_OutFlag_NON_PARAM_VARY |
+		PF_OutFlag_PIX_INDEPENDENT |
+		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
 
 	if (out_data->global_data)
 		PF_DISPOSE_HANDLE(out_data->global_data);
@@ -176,7 +178,7 @@ static PF_Err SequenceSetup(
 	}
 	else
 	{
-		data_string = new char[1]{ '\0' }; // TODO: Check why seqData is nullptr during the second call
+		data_string = new char[1]{'\0'}; // TODO: Check why seqData is nullptr during the second call
 	}
 
 	if (!data_string) return PF_Err_NONE;
@@ -186,10 +188,10 @@ static PF_Err SequenceSetup(
 	out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
 	SequenceDataP sequence_data = *reinterpret_cast<SequenceDataH>(out_data->sequence_data);
 	if (!sequence_data) return PF_Err_NONE;
-	
+
 	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
 	if (!sequence_data->rendererP) return PF_Err_NONE;
-	
+
 	ass_set_frame_size(sequence_data->rendererP, in_data->width, in_data->height);
 	ass_set_font_scale(sequence_data->rendererP, 1.);
 	ass_set_fonts(sequence_data->rendererP, nullptr, "Sans", 1, nullptr, true);
@@ -208,9 +210,9 @@ static PF_Err SequenceSetDown(
 	PF_InData* in_data) // Sequence Data
 {
 	// Dispose Sequence Data
-	
+
 	if (!in_data->sequence_data) return PF_Err_NONE;
-	
+
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
 
 	if (sequence_data)
@@ -257,7 +259,7 @@ static PF_Err SequenceFlatten(
 		ass_free_track(sequence_data->trackP);
 	if (sequence_data->dataStringP)
 		delete[] sequence_data->dataStringP;
-	
+
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
 	PF_DISPOSE_HANDLE(in_data->sequence_data);
 
@@ -334,7 +336,7 @@ static wchar_t* BasicFileOpen()
 
 	//char* result = W2A(pszFilePath);
 	//delete[] pszFilePath;
-	
+
 	psiResult->Release();
 	pfd->Release();
 	return pszFilePath;
@@ -356,17 +358,17 @@ UserChangedParam(
 	if (which_hitP->param_index == R_SUBLIGHT_CLASSIC_PARAMS_OPEN)
 	{
 		// Browse File
-		
+
 		wchar_t* file_path = BasicFileOpen();
 		if (!file_path) return PF_Err_NONE;
-		
+
 		// Read File
 
 		FILE* fp;
 		errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
 		if (fille_open_result) return PF_Err_NONE;
 		//delete[] file_path;
-		
+
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
 
@@ -425,7 +427,8 @@ static PF_Err Render(
 
 	// Calculate Time
 
-	const int time = (in_data->current_time / in_data->time_scale + params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]->u.fs_d.value)
+	const int time = (in_data->current_time / in_data->time_scale + params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]
+	                                                                ->u.fs_d.value)
 		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value / 100;
 
 	// Render Image
@@ -444,7 +447,7 @@ static PF_Err Render(
 
 		image = image->next;
 	}
-	
+
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
 
 	return PF_Err_NONE;
@@ -477,7 +480,7 @@ DllExport PF_Err EntryPointFunc(
 		case PF_Cmd_GLOBAL_SETUP:
 
 			err = GlobalSetup(in_data,
-				out_data);
+			                  out_data);
 			break;
 
 		case PF_Cmd_GLOBAL_SETDOWN:
@@ -508,9 +511,9 @@ DllExport PF_Err EntryPointFunc(
 		case PF_Cmd_USER_CHANGED_PARAM:
 
 			err = UserChangedParam(in_data,
-				out_data,
-				params,
-				static_cast<const PF_UserChangedParamExtra*>(extra));
+			                       out_data,
+			                       params,
+			                       static_cast<const PF_UserChangedParamExtra*>(extra));
 			break;
 
 		case PF_Cmd_PARAMS_SETUP:
