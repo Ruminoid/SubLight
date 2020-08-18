@@ -476,7 +476,7 @@ static PF_Err Render(
 	PF_ParamDef* params[],
 	PF_LayerDef* output)
 {
-	if (!out_data->sequence_data) return PF_Err_NONE;
+	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) == sizeof(SequenceData)) return PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
 		return PF_Err_NONE;
