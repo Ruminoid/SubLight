@@ -209,7 +209,7 @@ static PF_Err SequenceSetup(
 
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
-	in_data->sequence_data = out_data->sequence_data;
+	//in_data->sequence_data = out_data->sequence_data;
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
@@ -277,7 +277,7 @@ static PF_Err SequenceReSetup(
 
 		PF_UNLOCK_HANDLE(out_data->sequence_data);
 
-		in_data->sequence_data = out_data->sequence_data;
+		//in_data->sequence_data = out_data->sequence_data;
 	}
 	else
 	{
