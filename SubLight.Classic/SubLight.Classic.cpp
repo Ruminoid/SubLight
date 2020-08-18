@@ -68,6 +68,8 @@ static PF_Err GlobalSetup(
 		PF_OutFlag_PIX_INDEPENDENT |
 		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
 
+	out_data->out_flags2 = PF_OutFlag2_NONE;
+
 	if (out_data->global_data)
 		PF_DISPOSE_HANDLE(out_data->global_data);
 
