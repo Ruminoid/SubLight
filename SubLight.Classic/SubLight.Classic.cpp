@@ -156,6 +156,27 @@ static PF_Err ParamsSetup(
 
 #pragma region Sequence Setup
 
+static PF_Err InitializeSequenceData(
+	SequenceDataP sequence_data,
+	AssLibraryP ass_library,
+	char* data_string,
+	size_t len,
+	int width,
+	int height
+)
+{
+	ass_set_frame_size(sequence_data->rendererP, width, height);
+	ass_set_font_scale(sequence_data->rendererP, 1.);
+	ass_set_fonts(sequence_data->rendererP, nullptr, "Sans", 1, nullptr, true);
+	ass_set_cache_limits(sequence_data->rendererP, 512, 32);
+	if (data_string) sequence_data->trackP = ass_read_memory(ass_library, data_string, len, nullptr);
+
+	sequence_data->dataStringP = data_string;
+	sequence_data->len = len;
+
+	return PF_Err_NONE;
+}
+
 static PF_Err SequenceSetup(
 	PF_InData* in_data, // String Data
 	PF_OutData* out_data) // Sequence Data
@@ -163,48 +184,69 @@ static PF_Err SequenceSetup(
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
 	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
 
-	char* data_string = nullptr;
-	size_t len = 0;
+	// Setup Started
 
-	if (in_data->sequence_data)
+	if (in_data->sequence_data && PF_GET_HANDLE_SIZE(in_data->sequence_data))
 	{
-		// Re-setup - Reload string data
+		void* sequence_source = PF_LOCK_HANDLE(in_data->sequence_data);
 
-		len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
-		data_string = new char[len];
-		const char* source = static_cast<const char*>(PF_LOCK_HANDLE(in_data->sequence_data));
-		memcpy(data_string, source, len);
-		PF_UNLOCK_HANDLE(in_data->sequence_data);
-		PF_DISPOSE_HANDLE(in_data->sequence_data);
+		if (*static_cast<char*>(sequence_source) == '[')
+		{
+			// Re-setup - Reload string data
+
+			size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
+			char* data_string = new char[len];
+			const char* source = static_cast<const char*>(PF_LOCK_HANDLE(in_data->sequence_data));
+			memcpy(data_string, source, len);
+			PF_UNLOCK_HANDLE(in_data->sequence_data);
+			PF_DISPOSE_HANDLE(in_data->sequence_data);
+
+			if (!data_string) return PF_Err_NONE;
+
+			// Unflat - Initialize Sequence Data
+
+			out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+			SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
+			if (!sequence_data) return PF_Err_NONE;
+
+			sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
+			if (!sequence_data->rendererP) return PF_Err_NONE;
+
+			InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
+			                       in_data->height);
+
+			PF_UNLOCK_HANDLE(out_data->sequence_data);
+
+			in_data->sequence_data = out_data->sequence_data;
+		}
+		else
+		{
+			// Use Existing Sequence Data
+
+			//SequenceDataP sequence_data = static_cast<SequenceDataP>(sequence_source);
+
+			PF_UNLOCK_HANDLE(in_data->sequence_data);
+
+			out_data->sequence_data = in_data->sequence_data;
+		}
 	}
 	else
 	{
-		data_string = new char[1]{'\0'}; // TODO: Check why seqData is nullptr during the second call
+		// Initialize Sequence Data
+
+		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
+		if (!sequence_data) return PF_Err_NONE;
+
+		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
+		if (!sequence_data->rendererP) return PF_Err_NONE;
+
+		InitializeSequenceData(sequence_data, global_data->assLibraryP, nullptr, 0, in_data->width, in_data->height);
+
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
+
+		in_data->sequence_data = out_data->sequence_data;
 	}
-
-	if (!data_string) return PF_Err_NONE;
-
-	// Initialize Sequence Data
-
-	out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-	if (!sequence_data) return PF_Err_NONE;
-
-	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
-	if (!sequence_data->rendererP) return PF_Err_NONE;
-
-	ass_set_frame_size(sequence_data->rendererP, in_data->width, in_data->height);
-	ass_set_font_scale(sequence_data->rendererP, 1.);
-	ass_set_fonts(sequence_data->rendererP, nullptr, "Sans", 1, nullptr, true);
-	ass_set_cache_limits(sequence_data->rendererP, 512, 32);
-	sequence_data->trackP = ass_read_memory(global_data->assLibraryP, data_string, len, nullptr);
-
-	sequence_data->dataStringP = data_string;
-	sequence_data->len = len;
-
-	PF_UNLOCK_HANDLE(out_data->sequence_data);
-
-	in_data->sequence_data = out_data->sequence_data;
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
@@ -373,7 +415,7 @@ UserChangedParam(
 		FILE* fp;
 		errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
 		if (fille_open_result) return PF_Err_NONE;
-		//delete[] file_path;
+		delete[] file_path;
 
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
@@ -384,6 +426,14 @@ UserChangedParam(
 		fseek(fp, 0, SEEK_SET);
 		fread(data_string, len, 1, fp);
 		fclose(fp);
+
+		// Check ASS File
+
+		if (*data_string != '[')
+		{
+			delete[] data_string;
+			return PF_Err_NONE;
+		}
 
 		// Replace ASS Track
 
