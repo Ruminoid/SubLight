@@ -247,16 +247,22 @@ static PF_Err SequenceReSetup(
 {
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
 	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
-	
-	void* sequence_source = PF_LOCK_HANDLE(in_data->sequence_data);
 
-	if (*static_cast<char*>(sequence_source) == '[')
+	if (in_data->sequence_data && PF_GET_HANDLE_SIZE(in_data->sequence_data) == sizeof(SequenceData))
+	{
+		// Use Existing Sequence Data
+		// 
+		// ...and currently there's nothing to do.
+
+		//out_data->sequence_data = in_data->sequence_data;
+	}
+	else
 	{
 		// Re-setup - Reload string data
 
+		char* source = static_cast<char*>(PF_LOCK_HANDLE(in_data->sequence_data));
 		size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
 		char* data_string = new char[len];
-		char* source = static_cast<char*>(sequence_source);
 		memcpy(data_string, source, len);
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
 		PF_DISPOSE_HANDLE(in_data->sequence_data);
@@ -279,17 +285,7 @@ static PF_Err SequenceReSetup(
 
 		//in_data->sequence_data = out_data->sequence_data;
 	}
-	else
-	{
-		// Use Existing Sequence Data
-
-		//SequenceDataP sequence_data = static_cast<SequenceDataP>(sequence_source);
-
-		PF_UNLOCK_HANDLE(in_data->sequence_data);
-
-		//out_data->sequence_data = in_data->sequence_data;
-	}
-
+	
 	PF_UNLOCK_HANDLE(in_data->global_data);
 }
 
