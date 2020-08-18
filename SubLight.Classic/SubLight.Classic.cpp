@@ -87,7 +87,11 @@ static PF_Err GlobalSetDown(
 	PF_InData* in_data)
 {
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
-	if (!global_data) return PF_Err_NONE;
+	if (!global_data)
+	{
+		PF_UNLOCK_HANDLE(in_data->global_data);
+		return PF_Err_NONE;
+	}
 
 	if (global_data->assLibraryP)
 		ass_library_done(global_data->assLibraryP);
@@ -106,7 +110,6 @@ static PF_Err ParamsSetup(
 	PF_InData* in_data,
 	PF_OutData* out_data)
 {
-	PF_Err err = PF_Err_NONE;
 	PF_ParamDef def;
 
 	AEFX_CLR_STRUCT(def);
@@ -177,7 +180,7 @@ static PF_Err ParamsSetup(
 
 	out_data->num_params = R_SUBLIGHT_CLASSIC_NUM_PARAMS;
 
-	return err;
+	return PF_Err_NONE;
 }
 
 #pragma endregion
@@ -210,16 +213,30 @@ static PF_Err SequenceSetup(
 	PF_OutData* out_data) // Sequence Data
 {
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
-	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
+	if (!global_data || !global_data->assLibraryP)
+	{
+		PF_UNLOCK_HANDLE(in_data->global_data);
+		return PF_Err_NONE;
+	}
 
 	// Initialize Sequence Data
 
 	out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-	if (!sequence_data) return PF_Err_NONE;
+	if (!sequence_data)
+	{
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
+		PF_UNLOCK_HANDLE(in_data->global_data);
+		return PF_Err_NONE;
+	}
 
 	sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
-	if (!sequence_data->rendererP) return PF_Err_NONE;
+	if (!sequence_data->rendererP)
+	{
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
+		PF_UNLOCK_HANDLE(in_data->global_data);
+		return PF_Err_NONE;
+	}
 
 	size_t len = strlen(DEFAULT_DATA_STRING);
 	char* data_string = new char[len];
@@ -266,10 +283,16 @@ static PF_Err SequenceReSetup(
 	PF_InData* in_data, // String Data
 	PF_OutData* out_data) // Sequence Data
 {
+	if (!in_data->sequence_data) return SequenceSetup(in_data, out_data);
+	
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
-	if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
+	if (!global_data || !global_data->assLibraryP)
+	{
+		PF_UNLOCK_HANDLE(out_data->global_data);
+		return PF_Err_NONE;
+	}
 
-	if (in_data->sequence_data && PF_GET_HANDLE_SIZE(in_data->sequence_data) == sizeof(SequenceData))
+	if (PF_GET_HANDLE_SIZE(in_data->sequence_data) == sizeof(SequenceData))
 	{
 		// Use Existing Sequence Data
 		// 
@@ -288,7 +311,11 @@ static PF_Err SequenceReSetup(
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
 		//PF_DISPOSE_HANDLE(in_data->sequence_data);
 
-		if (!data_string) return PF_Err_NONE;
+		if (!data_string)
+		{
+			PF_UNLOCK_HANDLE(out_data->global_data);
+			return PF_Err_NONE;
+		}
 
 		// Unflat - Initialize Sequence Data
 
@@ -297,10 +324,20 @@ static PF_Err SequenceReSetup(
 
 		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
 		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-		if (!sequence_data) return PF_Err_NONE;
+		if (!sequence_data)
+		{
+			PF_UNLOCK_HANDLE(out_data->sequence_data);
+			PF_UNLOCK_HANDLE(out_data->global_data);
+			return PF_Err_NONE;
+		}
 
 		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
-		if (!sequence_data->rendererP) return PF_Err_NONE;
+		if (!sequence_data->rendererP)
+		{
+			PF_UNLOCK_HANDLE(out_data->sequence_data);
+			PF_UNLOCK_HANDLE(out_data->global_data);
+			return PF_Err_NONE;
+		}
 
 		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
 			in_data->height);
@@ -319,7 +356,11 @@ static PF_Err SequenceFlatten(
 {
 	if (!in_data->sequence_data) return PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
-	if (!sequence_data || !sequence_data->dataStringP) return PF_Err_NONE;
+	if (!sequence_data || !sequence_data->dataStringP)
+	{
+		PF_UNLOCK_HANDLE(in_data->sequence_data);
+		return PF_Err_NONE;
+	}
 
 	// Flatten Data
 
@@ -467,11 +508,19 @@ UserChangedParam(
 
 		if (!in_data->global_data) return PF_Err_NONE;
 		GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
-		if (!global_data || !global_data->assLibraryP) return PF_Err_NONE;
+		if (!global_data || !global_data->assLibraryP || !out_data->sequence_data)
+		{
+			PF_UNLOCK_HANDLE(in_data->global_data);
+			return PF_Err_NONE;
+		}
 
-		if (!out_data->sequence_data) return PF_Err_NONE;
 		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
-		if (!sequence_data) return PF_Err_NONE;
+		if (!sequence_data)
+		{
+			PF_UNLOCK_HANDLE(out_data->sequence_data);
+			PF_UNLOCK_HANDLE(in_data->global_data);
+			return PF_Err_NONE;
+		}
 
 		if (sequence_data->trackP)
 			ass_free_track(sequence_data->trackP);
@@ -497,10 +546,13 @@ static PF_Err Render(
 	PF_ParamDef* params[],
 	PF_LayerDef* output)
 {
-	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) == sizeof(SequenceData)) return PF_Err_NONE;
+	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData)) return PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
+	{
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
 		return PF_Err_NONE;
+	}
 
 	// Initialize Data
 
