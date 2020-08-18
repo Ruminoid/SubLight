@@ -601,8 +601,8 @@ static PF_Err Render(
 
 	// Initialize Data
 
-	const int width = in_data->width;
-	const int height = in_data->height;
+	const int width = output->width;
+	const int height = output->height;
 	//const int stride = (width * 32 + 31 & ~31) / 8;
 	const int stride = output->rowbytes; // Use stride from output here
 
