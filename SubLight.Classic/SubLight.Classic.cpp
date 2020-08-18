@@ -265,14 +265,17 @@ static PF_Err SequenceReSetup(
 		char* data_string = new char[len];
 		memcpy(data_string, source, len);
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
-		PF_DISPOSE_HANDLE(in_data->sequence_data);
+		//PF_DISPOSE_HANDLE(in_data->sequence_data);
 
 		if (!data_string) return PF_Err_NONE;
 
 		// Unflat - Initialize Sequence Data
 
-		in_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
+		if (out_data->sequence_data)
+			PF_DISPOSE_HANDLE(out_data->sequence_data);
+
+		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 		if (!sequence_data) return PF_Err_NONE;
 
 		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
@@ -281,7 +284,7 @@ static PF_Err SequenceReSetup(
 		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
 			in_data->height);
 
-		PF_UNLOCK_HANDLE(in_data->sequence_data);
+		PF_UNLOCK_HANDLE(out_data->sequence_data);
 
 		//in_data->sequence_data = out_data->sequence_data;
 	}
