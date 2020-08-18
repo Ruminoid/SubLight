@@ -348,6 +348,8 @@ static PF_Err SequenceReSetup(
 	}
 	
 	PF_UNLOCK_HANDLE(in_data->global_data);
+
+	return PF_Err_NONE;
 }
 
 static PF_Err SequenceFlatten(
