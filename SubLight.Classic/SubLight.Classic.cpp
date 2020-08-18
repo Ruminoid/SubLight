@@ -332,9 +332,9 @@ static char* BasicFileOpen()
 	//                    len,
 	//                    nullptr,
 	//                    NULL);
-	//delete[] pszFilePath;
 
 	char* result = W2A(pszFilePath);
+	//delete[] pszFilePath;
 	
 	psiResult->Release();
 	pfd->Release();
@@ -363,15 +363,9 @@ UserChangedParam(
 		
 		// Read File
 
-		//uintmax_t len = std::filesystem::file_size(file_path);
-		//char* data_string = new char[len];
-		//std::ifstream ifs(file_path);
-		//delete[] file_path;
-		//ifs.read(data_string, len);
-
 		FILE* fp;
 		if (!fopen_s(&fp, file_path, "r")) return PF_Err_NONE;
-		delete[] file_path;
+		//delete[] file_path;
 		
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
