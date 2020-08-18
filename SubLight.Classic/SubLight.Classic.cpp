@@ -415,7 +415,7 @@ UserChangedParam(
 		FILE* fp;
 		errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
 		if (fille_open_result) return PF_Err_NONE;
-		delete[] file_path;
+		//delete[] file_path;
 
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
