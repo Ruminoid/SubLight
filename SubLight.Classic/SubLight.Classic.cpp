@@ -330,8 +330,8 @@ static PF_Err SequenceFlatten(
 		ass_renderer_done(sequence_data->rendererP);
 	if (sequence_data->trackP)
 		ass_free_track(sequence_data->trackP);
-	if (sequence_data->dataStringP)
-		delete[] sequence_data->dataStringP;
+	//if (sequence_data->dataStringP)
+	//	delete[] sequence_data->dataStringP;
 
 	PF_UNLOCK_HANDLE(in_data->sequence_data);
 	PF_DISPOSE_HANDLE(in_data->sequence_data);
