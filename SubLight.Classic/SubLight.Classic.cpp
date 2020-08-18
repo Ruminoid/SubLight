@@ -21,7 +21,8 @@ const char* DEFAULT_DATA_STRING = "[Script Info]";
 
 #pragma region Log Utilities
 
-void LogAss(int level, const char* fmt, va_list args, void* opaque) {
+void LogAss(int level, const char* fmt, va_list args, void* opaque)
+{
 	//auto context = reinterpret_cast<ruminoid_libass_context*>(opaque);
 
 	if (level >= 7) return;
@@ -68,7 +69,9 @@ static PF_Err GlobalSetup(
 		PF_OutFlag_PIX_INDEPENDENT |
 		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
 
-	out_data->out_flags2 = PF_OutFlag2_NONE;
+	out_data->out_flags2 = PF_OutFlag2_I_AM_THREADSAFE |
+		PF_OutFlag2_AE13_5_THREADSAFE |
+		PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
 
 	if (out_data->global_data)
 		PF_DISPOSE_HANDLE(out_data->global_data);
@@ -243,7 +246,7 @@ static PF_Err SequenceSetup(
 	memcpy(data_string, DEFAULT_DATA_STRING, len);
 
 	InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string,
-		len, in_data->width, in_data->height);
+	                       len, in_data->width, in_data->height);
 
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
@@ -284,7 +287,7 @@ static PF_Err SequenceReSetup(
 	PF_OutData* out_data) // Sequence Data
 {
 	if (!in_data->sequence_data) return SequenceSetup(in_data, out_data);
-	
+
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(in_data->global_data));
 	if (!global_data || !global_data->assLibraryP)
 	{
@@ -340,13 +343,13 @@ static PF_Err SequenceReSetup(
 		}
 
 		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
-			in_data->height);
+		                       in_data->height);
 
 		PF_UNLOCK_HANDLE(out_data->sequence_data);
 
 		//in_data->sequence_data = out_data->sequence_data;
 	}
-	
+
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
 	return PF_Err_NONE;
@@ -385,6 +388,31 @@ static PF_Err SequenceFlatten(
 
 	char* target = static_cast<char*>(PF_LOCK_HANDLE(out_data->sequence_data));
 	memcpy(target, tmp, len);
+	PF_UNLOCK_HANDLE(out_data->sequence_data);
+
+	return PF_Err_NONE;
+}
+
+static PF_Err SequenceGetFlattenedData(
+	PF_InData* in_data, // Sequence Data
+	PF_OutData* out_data) // String Data
+{
+	if (!in_data->sequence_data) return PF_Err_NONE;
+	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
+	if (!sequence_data || !sequence_data->dataStringP)
+	{
+		PF_UNLOCK_HANDLE(in_data->sequence_data);
+		return PF_Err_NONE;
+	}
+
+	// Flatten Data
+
+	size_t len = sequence_data->len;
+
+	out_data->sequence_data = PF_NEW_HANDLE(len);
+
+	char* target = static_cast<char*>(PF_LOCK_HANDLE(out_data->sequence_data));
+	memcpy(target, sequence_data->dataStringP, len);
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
 	return PF_Err_NONE;
@@ -535,6 +563,8 @@ UserChangedParam(
 		PF_UNLOCK_HANDLE(in_data->global_data);
 	}
 
+	out_data->out_flags = PF_OutFlag_FORCE_RERENDER;
+
 	return err;
 }
 
@@ -553,8 +583,9 @@ static PF_Err Render(
 	if (!static_cast<bool>(params[R_SUBLIGHT_CLASSIC_PARAMS_RENDER]->u.bd.value)) return PF_Err_NONE;
 
 	// Start Render
-	
-	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData)) return PF_Err_NONE;
+
+	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData)) return
+		PF_Err_NONE;
 	SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
 	if (!sequence_data || !sequence_data->dataStringP || !sequence_data->rendererP || !sequence_data->trackP)
 	{
@@ -650,6 +681,10 @@ DllExport PF_Err EntryPointFunc(
 		case PF_Cmd_SEQUENCE_FLATTEN:
 
 			err = SequenceFlatten(in_data, out_data);
+			break;
+
+		case PF_Cmd_GET_FLATTENED_SEQUENCE_DATA:
+			err = SequenceGetFlattenedData(in_data, out_data);
 			break;
 
 		case PF_Cmd_USER_CHANGED_PARAM:
