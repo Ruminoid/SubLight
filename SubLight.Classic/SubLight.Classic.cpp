@@ -265,8 +265,8 @@ static PF_Err SequenceReSetup(
 
 		// Unflat - Initialize Sequence Data
 
-		out_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
-		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(out_data->sequence_data));
+		in_data->sequence_data = PF_NEW_HANDLE(sizeof(SequenceData));
+		SequenceDataP sequence_data = static_cast<SequenceDataP>(PF_LOCK_HANDLE(in_data->sequence_data));
 		if (!sequence_data) return PF_Err_NONE;
 
 		sequence_data->rendererP = ass_renderer_init(global_data->assLibraryP);
@@ -275,7 +275,7 @@ static PF_Err SequenceReSetup(
 		InitializeSequenceData(sequence_data, global_data->assLibraryP, data_string, len, in_data->width,
 			in_data->height);
 
-		PF_UNLOCK_HANDLE(out_data->sequence_data);
+		PF_UNLOCK_HANDLE(in_data->sequence_data);
 
 		//in_data->sequence_data = out_data->sequence_data;
 	}
@@ -287,7 +287,7 @@ static PF_Err SequenceReSetup(
 
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
 
-		out_data->sequence_data = in_data->sequence_data;
+		//out_data->sequence_data = in_data->sequence_data;
 	}
 
 	PF_UNLOCK_HANDLE(in_data->global_data);
