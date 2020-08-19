@@ -20,21 +20,22 @@ const char* DEFAULT_DATA_STRING = "[Script Info]";
 #pragma endregion
 
 #pragma region Log Utilities
-
-void LogAss(int level, const char* fmt, va_list args, void* opaque)
-{
-	//auto context = reinterpret_cast<ruminoid_libass_context*>(opaque);
-
-	if (level >= 7) return;
-	char buf[1024];
-#ifdef _WIN32
-	vsprintf_s(buf, sizeof(buf), fmt, args);
-#else
-	vsnprintf(buf, sizeof(buf), fmt, args);
-#endif
-
-	//context->log(level, buf);
-}
+//
+//void LogAss(int level, const char* fmt, va_list args, void* opaque)
+//{
+//	//auto context = reinterpret_cast<ruminoid_libass_context*>(opaque);
+//
+//	if (level >= 7) return;
+//	char buf[1024];
+//#ifdef _WIN32
+//	vsprintf_s(buf, sizeof(buf), fmt, args);
+//#else
+//	vsnprintf(buf, sizeof(buf), fmt, args);
+//#endif
+//
+//	//context->log(level, buf);
+//	OutputDebugStringA(buf);
+//}
 
 #pragma endregion
 
@@ -81,7 +82,7 @@ static PF_Err GlobalSetup(
 
 	GlobalDataP global_data = static_cast<GlobalDataP>(PF_LOCK_HANDLE(out_data->global_data));
 	global_data->assLibraryP = ass_library_init();
-	ass_set_message_cb(global_data->assLibraryP, LogAss, nullptr);
+	//ass_set_message_cb(global_data->assLibraryP, LogAss, nullptr);
 	PF_UNLOCK_HANDLE(out_data->global_data);
 
 	return PF_Err_NONE;
@@ -610,7 +611,7 @@ static PF_Err Render(
 
 	const int time = (in_data->current_time / static_cast<double>(in_data->time_scale) + params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]
 	                                                                                     ->u.fs_d.value)
-		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 100;
+		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 1000;
 
 	try
 	{
