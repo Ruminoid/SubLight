@@ -44,9 +44,9 @@ void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, u
 
 #define	MAJOR_VERSION	0
 #define	MINOR_VERSION	2
-#define	BUG_VERSION		5
+#define	BUG_VERSION		6
 #define	STAGE_VERSION	PF_Stage_BETA
-#define	BUILD_VERSION	8
+#define	BUILD_VERSION	9
 
 enum {
 	SKELETON_INPUT = 0,
