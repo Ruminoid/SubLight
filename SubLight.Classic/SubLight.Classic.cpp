@@ -607,8 +607,9 @@ static PF_Err Render(
 
 	// Calculate Time
 
-	const int time = (in_data->current_time / static_cast<double>(in_data->time_scale) + params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]
-	                                                                                     ->u.fs_d.value)
+	const int time = (
+			in_data->current_time / static_cast<double>(in_data->time_scale) +
+			params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]->u.fs_d.value)
 		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 1000;
 
 	try

@@ -3,22 +3,23 @@
 #ifndef R_SUBLIGHT_CLASSIC_H
 #define R_SUBLIGHT_CLASSIC_H
 
-typedef unsigned char		u_char;
-typedef unsigned short		u_short;
-typedef unsigned short		u_int16;
-typedef unsigned long		u_long;
-typedef short int			int16;
+typedef unsigned char u_char;
+typedef unsigned short u_short;
+typedef unsigned short u_int16;
+typedef unsigned long u_long;
+typedef short int int16;
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
 
-#define PF_DEEP_COLOR_AWARE 0	// make sure we get 16bpc pixels; 
-								// AE_Effect.h checks for this.
- 
+// make sure we get 16bpc pixels; 
+// AE_Effect.h checks for this.
+#define PF_DEEP_COLOR_AWARE 0
+
 #include "AEConfig.h"
 
 #ifdef AE_OS_WIN
-	typedef unsigned short PixelType;
-	#include <Windows.h>
+typedef unsigned short PixelType;
+#include <Windows.h>
 #endif
 
 #include "entry.h"
@@ -38,7 +39,18 @@ typedef short int			int16;
 
 // Utils
 
-void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, unsigned char* src, int src_stride, int dst_x, int dst_y, int src_w, int src_h);
+void BlendSingle(
+	PF_EffectWorld* def,
+	int dst_stride,
+	int w,
+	int h,
+	int color,
+	unsigned char* src,
+	int src_stride,
+	int dst_x,
+	int dst_y,
+	int src_w,
+	int src_h);
 
 /* Versioning information */
 
@@ -48,7 +60,8 @@ void BlendSingle(PF_EffectWorld* def, int dst_stride, int w, int h, int color, u
 #define	STAGE_VERSION	PF_Stage_BETA
 #define	BUILD_VERSION	9
 
-enum {
+enum
+{
 	SKELETON_INPUT = 0,
 	R_SUBLIGHT_CLASSIC_PARAMS_OPEN,
 	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_START,
@@ -61,7 +74,8 @@ enum {
 	R_SUBLIGHT_CLASSIC_NUM_PARAMS
 };
 
-enum {
+enum
+{
 	R_SUBLIGHT_CLASSIC_PARAMS_OPEN_DISK_ID = 1,
 	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_START_DISK_ID,
 	R_SUBLIGHT_CLASSIC_PARAMS_RENDER_DISK_ID,
@@ -72,33 +86,33 @@ enum {
 	R_SUBLIGHT_CLASSIC_PARAMS_TIME_GROUP_END_DISK_ID,
 };
 
-typedef ASS_Library AssLibrary, * AssLibraryP, ** AssLibraryH;
+typedef ASS_Library AssLibrary, *AssLibraryP, **AssLibraryH;
 
 typedef struct GlobalData
 {
 	AssLibraryP assLibraryP;
-} GlobalData, * GlobalDataP, ** GlobalDataH;
+} GlobalData, *GlobalDataP, **GlobalDataH;
 
 typedef struct SequenceData
 {
-	ASS_Track*		trackP			=	nullptr;
-	ASS_Renderer*	rendererP		=	nullptr;
-	char*			dataStringP		=	nullptr;
-	size_t			len				=	0;
-} SequenceData, * SequenceDataP, ** SequenceDataH;
+	ASS_Track* trackP = nullptr;
+	ASS_Renderer* rendererP = nullptr;
+	char* dataStringP = nullptr;
+	size_t len = 0;
+} SequenceData, *SequenceDataP, **SequenceDataH;
 
 #ifdef __cplusplus
-	extern "C" {
+extern "C" {
 #endif
-	
-DllExport	PF_Err 
-EntryPointFunc(	
-	PF_Cmd			cmd,
-	PF_InData		*in_data,
-	PF_OutData		*out_data,
-	PF_ParamDef		*params[],
-	PF_LayerDef		*output,
-	void			*extra) ;
+
+DllExport PF_Err
+EntryPointFunc(
+	PF_Cmd cmd,
+	PF_InData* in_data,
+	PF_OutData* out_data,
+	PF_ParamDef* params[],
+	PF_LayerDef* output,
+	void* extra);
 
 #ifdef __cplusplus
 }
