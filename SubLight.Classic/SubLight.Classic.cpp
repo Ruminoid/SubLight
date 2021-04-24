@@ -71,9 +71,7 @@ static PF_Err GlobalSetup(
 		PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING |
 		PF_OutFlag_SEND_UPDATE_PARAMS_UI;
 
-	out_data->out_flags2 = PF_OutFlag2_I_AM_THREADSAFE |
-		PF_OutFlag2_AE13_5_THREADSAFE |
-		PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
+	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
 
 	if (out_data->global_data)
 		PF_DISPOSE_HANDLE(out_data->global_data);
