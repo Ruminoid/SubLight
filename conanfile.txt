@@ -1,2 +1,5 @@
 [requires]
 libass/0.14.0@charliejiang/stable
+
+[generators]
+visual_studio
