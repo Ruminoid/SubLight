@@ -245,7 +245,7 @@ static PF_Err SequenceSetup(
 		return PF_Err_NONE;
 	}
 
-	size_t len = strlen(DEFAULT_DATA_STRING);
+	const size_t len = strlen(DEFAULT_DATA_STRING);
 	char* data_string = new char[len];
 	memcpy(data_string, DEFAULT_DATA_STRING, len);
 
@@ -253,9 +253,7 @@ static PF_Err SequenceSetup(
 	                       len, in_data->width, in_data->height);
 
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
-
-	//in_data->sequence_data = out_data->sequence_data;
-
+	
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
 	return PF_Err_NONE;
@@ -312,7 +310,7 @@ static PF_Err SequenceReSetup(
 		// Re-setup - Reload string data
 
 		char* source = static_cast<char*>(PF_LOCK_HANDLE(in_data->sequence_data));
-		size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
+		const size_t len = PF_GET_HANDLE_SIZE(in_data->sequence_data);
 		char* data_string = new char[len];
 		memcpy(data_string, source, len);
 		PF_UNLOCK_HANDLE(in_data->sequence_data);
@@ -373,7 +371,7 @@ static PF_Err SequenceFlatten(
 
 	// Flatten Data
 
-	size_t len = sequence_data->len;
+	const size_t len = sequence_data->len;
 	char* tmp = new char[len];
 
 	memcpy(tmp, sequence_data->dataStringP, len);
@@ -411,7 +409,7 @@ static PF_Err SequenceGetFlattenedData(
 
 	// Flatten Data
 
-	size_t len = sequence_data->len;
+	const size_t len = sequence_data->len;
 
 	out_data->sequence_data = PF_NEW_HANDLE(len);
 
@@ -506,7 +504,7 @@ UserChangedParam(
 	PF_ParamDef* params[],
 	const PF_UserChangedParamExtra* which_hitP)
 {
-	PF_Err err = PF_Err_NONE;
+	const PF_Err err = PF_Err_NONE;
 
 	if (which_hitP->param_index == R_SUBLIGHT_CLASSIC_PARAMS_OPEN)
 	{
@@ -518,7 +516,7 @@ UserChangedParam(
 		// Read File
 
 		FILE* fp;
-		errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
+		const errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
 		if (fille_open_result) return PF_Err_NONE;
 		//delete[] file_path;
 

@@ -20,10 +20,10 @@ void BlendSingle(
 {
 	if (!def || !src) return;
 
-	auto opacity = 0xFF - (unsigned char)(_a(color));
-	auto r = (unsigned char)(_r(color));
-	auto g = (unsigned char)(_g(color));
-	auto b = (unsigned char)(_b(color));
+	const auto opacity = 0xFF - static_cast<unsigned char>((_a(color)));
+	const auto r = static_cast<unsigned char>((_r(color)));
+	const auto g = static_cast<unsigned char>((_g(color)));
+	const auto b = static_cast<unsigned char>((_b(color)));
 
 	src_w = MIN(w - dst_x, src_w);
 	src_h = MIN(h - dst_y, src_h);
@@ -34,17 +34,17 @@ void BlendSingle(
 		dst_x * sizeof(PF_Pixel));
 	if (!dstp) return;
 
-	unsigned char* srcp = reinterpret_cast<unsigned char*>(src);
+	unsigned char* srcp = src;
 
-	int src_stride2 = src_stride - src_w;
-	int dst_stride2 = dst_stride / 4 - src_w;
+	const int src_stride2 = src_stride - src_w;
+	const int dst_stride2 = dst_stride / 4 - src_w;
 
 	for (int y = 0; y < src_h; y++, dstp += dst_stride2, srcp += src_stride2)
 	{
 		for (int x = 0; x < src_w; x++, dstp++, srcp++)
 		{
-			unsigned int k = unsigned(*srcp) * opacity / 0xFF;
-			unsigned int ck = 255 - k;
+			const unsigned int k = static_cast<unsigned>(*srcp) * opacity / 0xFF;
+			const unsigned int ck = 255 - k;
 
 			dstp->red = (k * r + ck * dstp->red) / 255;
 			dstp->green = (k * g + ck * dstp->green) / 255;
