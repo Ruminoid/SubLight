@@ -341,3 +341,13 @@ healthchecksdb
 
 # AE Tools
 Tools/
+
+# Generated resources
+SubLight.Classic/SubLight.Classic.PiPL.rc
+
+# Conan files
+conan.lock
+conanbuildinfo.props
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json
