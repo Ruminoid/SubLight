@@ -419,6 +419,8 @@ static PF_Err SequenceGetFlattenedData(
 	memcpy(target, sequence_data->dataStringP, len);
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
 
+	PF_UNLOCK_HANDLE(in_data->sequence_data);
+
 	return PF_Err_NONE;
 }
 
