@@ -30,7 +30,7 @@ void BlendSingle(
 
 	PF_Pixel* dstp = reinterpret_cast<PF_Pixel*>(
 		reinterpret_cast<char*>(def->data) +
-		dst_y * def->rowbytes +
+		dst_y * dst_stride +
 		dst_x * sizeof(PF_Pixel));
 	if (!dstp) return;
 
@@ -50,6 +50,26 @@ void BlendSingle(
 			dstp->green = (k * g + ck * dstp->green) / 255;
 			dstp->blue = (k * b + ck * dstp->blue) / 255;
 			dstp->alpha = 0xFF - ck * (0xFF - dstp->alpha) / 255;
+		}
+	}
+}
+
+void CleanupWorld(
+	PF_EffectWorld* output)
+{
+	for (int y = 0; y < output->height; y++)
+	{
+		for (int x = 0; x < output->width; x++)
+		{
+			PF_Pixel* pixel = reinterpret_cast<PF_Pixel*>(
+				reinterpret_cast<char*>(output->data) +
+				y * output->rowbytes +
+				x * sizeof(PF_Pixel));
+
+			pixel->red = 0;
+			pixel->green = 0;
+			pixel->blue = 0;
+			pixel->alpha = 0;
 		}
 	}
 }

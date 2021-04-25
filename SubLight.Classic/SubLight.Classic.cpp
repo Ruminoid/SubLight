@@ -619,6 +619,10 @@ static PF_Err Render(
 		ass_set_frame_size(sequence_data->rendererP, width, height);
 		ASS_Image* image = ass_render_frame(sequence_data->rendererP, sequence_data->trackP, time, nullptr);
 
+		// Cleanup
+
+		CleanupWorld(output);
+
 		// Blend Image
 
 		while (image)
