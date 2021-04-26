@@ -594,10 +594,6 @@ static PF_Err Render(
 	PF_ParamDef* params[],
 	PF_LayerDef* output)
 {
-	// Check Render Switch
-
-	if (!static_cast<bool>(params[R_SUBLIGHT_CLASSIC_PARAMS_RENDER]->u.bd.value)) return PF_Err_NONE;
-
 	// Start Render
 
 	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData))
@@ -610,32 +606,42 @@ static PF_Err Render(
 		return PF_Err_NONE;
 	}
 
-	// Initialize Data
-
-	const int width = output->width;
-	const int height = output->height;
-	//const int stride = (width * 32 + 31 & ~31) / 8;
-	const int stride = output->rowbytes; // Use stride from output here
-
-	// Calculate Time
-
-	const int time = (
-			in_data->current_time / static_cast<double>(in_data->time_scale) +
-			params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]->u.fs_d.value)
-		* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 1000;
-
 	try
 	{
+		// Cleanup
+
+		PF_PROGRESS(in_data, 0, 4);
+
+		CleanupWorld(output);
+
+		// Check Render Switch
+
+		if (!static_cast<bool>(params[R_SUBLIGHT_CLASSIC_PARAMS_RENDER]->u.bd.value)) return PF_Err_NONE;
+
+		// Initialize Data
+
+		const int width = output->width;
+		const int height = output->height;
+		//const int stride = (width * 32 + 31 & ~31) / 8;
+		const int stride = output->rowbytes; // Use stride from output here
+
+		// Calculate Time
+
+		const int time = (
+			in_data->current_time / static_cast<double>(in_data->time_scale) +
+			params[R_SUBLIGHT_CLASSIC_PARAMS_OFFSET]->u.fs_d.value)
+			* params[R_SUBLIGHT_CLASSIC_PARAMS_STRETCH]->u.fs_d.value * 1000;
+
 		// Render Image
+
+		PF_PROGRESS(in_data, 1, 4);
 
 		ass_set_frame_size(sequence_data->rendererP, width, height);
 		ASS_Image* image = ass_render_frame(sequence_data->rendererP, sequence_data->trackP, time, nullptr);
 
-		// Cleanup
+		// Blend Subtitle
 
-		CleanupWorld(output);
-
-		// Blend Image
+		PF_PROGRESS(in_data, 2, 4);
 
 		while (image)
 		{
@@ -646,6 +652,14 @@ static PF_Err Render(
 
 			image = image->next;
 		}
+
+		// Blend Final Image
+
+		PF_PROGRESS(in_data, 3, 4);
+		
+		PF_LayerDef* input = &params[0]->u.ld;
+
+		PF_BLEND(output, input, static_cast<PF_Fixed>(params[R_SUBLIGHT_CLASSIC_PARAMS_BLEND_RATIO]->u.fs_d.value), output);
 	}
 	catch (...)
 	{
