@@ -59,9 +59,9 @@ void CleanupWorld(
 
 #define	MAJOR_VERSION	0
 #define	MINOR_VERSION	2
-#define	BUG_VERSION		6
+#define	BUG_VERSION		7
 #define	STAGE_VERSION	PF_Stage_BETA
-#define	BUILD_VERSION	9
+#define	BUILD_VERSION	10
 
 enum
 {
