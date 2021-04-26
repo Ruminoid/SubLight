@@ -138,6 +138,18 @@ static PF_Err ParamsSetup(
 	                PF_ParamFlag_SUPERVISE,
 	                R_SUBLIGHT_CLASSIC_PARAMS_RENDER_DISK_ID);
 
+	PF_ADD_FLOAT_SLIDER(STR(StrID_Params_Blend_Ratio_Name),
+							0L,
+							1L << 16,
+							0L,
+							1L << 16,
+							AEFX_AUDIO_DEFAULT_CURVE_TOLERANCE,
+							0L,
+							1,
+							0,
+							1,
+							R_SUBLIGHT_CLASSIC_PARAMS_BLEND_RATIO_DISK_ID);
+
 	AEFX_CLR_STRUCT(def);
 
 	PF_END_TOPIC(R_SUBLIGHT_CLASSIC_PARAMS_RENDER_GROUP_END_DISK_ID);

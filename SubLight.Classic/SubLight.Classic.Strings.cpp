@@ -16,7 +16,8 @@ TableString g_strs[StrID_NUMTYPES] = {
 	StrID_Params_Render_Name, "Render",
 	StrID_Params_Time_Name, "Time",
 	StrID_Params_Offset_Name, "Offset",
-	StrID_Params_Stretch_Name, "Stretch"
+	StrID_Params_Stretch_Name, "Stretch",
+	StrID_Params_Blend_Ratio_Name, "Blend Ratio (With Current Layer)"
 };
 
 

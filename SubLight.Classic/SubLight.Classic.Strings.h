@@ -10,5 +10,6 @@ typedef enum {
 	StrID_Params_Time_Name,
 	StrID_Params_Offset_Name,
 	StrID_Params_Stretch_Name,
+	StrID_Params_Blend_Ratio_Name,
 	StrID_NUMTYPES
 } StrIDType;
