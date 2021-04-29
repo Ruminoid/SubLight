@@ -1,4 +1,4 @@
-﻿#include "SubLight.Classic.h"
+#include "SubLight.Classic.h"
 
 #include <atlstr.h>
 #include <ShObjIdl.h>
@@ -265,7 +265,7 @@ static PF_Err SequenceSetup(
 	                       len, in_data->width, in_data->height);
 
 	PF_UNLOCK_HANDLE(out_data->sequence_data);
-	
+
 	PF_UNLOCK_HANDLE(in_data->global_data);
 
 	return PF_Err_NONE;
@@ -312,7 +312,7 @@ static PF_Err SequenceReSetup(
 	if (PF_GET_HANDLE_SIZE(in_data->sequence_data) == sizeof(SequenceData))
 	{
 		// Use Existing Sequence Data
-		// 
+		//
 		// ...and currently there's nothing to do.
 
 		//out_data->sequence_data = in_data->sequence_data;
@@ -595,6 +595,8 @@ static PF_Err Render(
 	PF_LayerDef* output)
 {
 	// Start Render
+	// Cleanup
+	in_data->utils->fill(in_data->effect_ref, nullptr, nullptr, output);
 
 	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData))
 		return
@@ -611,8 +613,7 @@ static PF_Err Render(
 		// Cleanup
 
 		PF_PROGRESS(in_data, 0, 4);
-
-		CleanupWorld(output);
+		//CleanupWorld(output);
 
 		// Check Render Switch
 
@@ -643,10 +644,13 @@ static PF_Err Render(
 
 		PF_PROGRESS(in_data, 2, 4);
 
+		PF_Err err = PF_Err_NONE;
+		PF_Pixel* dst = nullptr;
+		err = in_data->utils->get_pixel_data8(output, nullptr, &dst);
 		while (image)
 		{
 			BlendSingle(
-				output, stride, width, height,
+				dst, stride, width, height,
 				image->color,
 				image->bitmap, image->stride, image->dst_x, image->dst_y, image->w, image->h);
 
@@ -656,7 +660,7 @@ static PF_Err Render(
 		// Blend Final Image
 
 		PF_PROGRESS(in_data, 3, 4);
-		
+
 		PF_LayerDef* input = &params[0]->u.ld;
 
 		PF_BLEND(output, input, static_cast<PF_Fixed>(params[R_SUBLIGHT_CLASSIC_PARAMS_BLEND_RATIO]->u.fs_d.value), output);

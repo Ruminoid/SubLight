@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef R_SUBLIGHT_CLASSIC_H
 #define R_SUBLIGHT_CLASSIC_H
@@ -11,7 +11,7 @@ typedef short int int16;
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
 
-// make sure we get 16bpc pixels; 
+// make sure we get 16bpc pixels;
 // AE_Effect.h checks for this.
 #define PF_DEEP_COLOR_AWARE 0
 
@@ -40,7 +40,7 @@ typedef unsigned short PixelType;
 // Utils
 
 void BlendSingle(
-	PF_EffectWorld* def,
+	PF_Pixel* def,
 	int dst_stride,
 	int w,
 	int h,
