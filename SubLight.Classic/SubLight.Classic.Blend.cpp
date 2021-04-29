@@ -1,4 +1,4 @@
-﻿#include "SubLight.Classic.h"
+#include "SubLight.Classic.h"
 
 #define _r(c) ((c)>>24)
 #define _g(c) (((c)>>16)&0xFF)
@@ -6,7 +6,7 @@
 #define _a(c) ((c)&0xFF)
 
 void BlendSingle(
-	PF_EffectWorld* def,
+	PF_Pixel* dst,
 	int dst_stride,
 	int w,
 	int h,
@@ -18,7 +18,7 @@ void BlendSingle(
 	int src_w,
 	int src_h)
 {
-	if (!def || !src) return;
+	if (!dst || !src) return;
 
 	const auto opacity = 0xFF - static_cast<unsigned char>((_a(color)));
 	const auto r = static_cast<unsigned char>((_r(color)));
@@ -29,7 +29,7 @@ void BlendSingle(
 	src_h = MIN(h - dst_y, src_h);
 
 	PF_Pixel* dstp = reinterpret_cast<PF_Pixel*>(
-		reinterpret_cast<char*>(def->data) +
+		reinterpret_cast<char*>(dst) +
 		dst_y * dst_stride +
 		dst_x * sizeof(PF_Pixel));
 	if (!dstp) return;
@@ -54,9 +54,12 @@ void BlendSingle(
 	}
 }
 
+/// @deparcated Use AE FillMatte Suite.
 void CleanupWorld(
+
 	PF_EffectWorld* output)
 {
+
 	for (int y = 0; y < output->height; y++)
 	{
 		for (int x = 0; x < output->width; x++)
