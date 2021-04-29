@@ -52,9 +52,6 @@ void BlendSingle(
 	int src_w,
 	int src_h);
 
-void CleanupWorld(
-	PF_EffectWorld* output);
-
 /* Versioning information */
 
 #define	MAJOR_VERSION	0

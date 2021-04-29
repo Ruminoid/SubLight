@@ -595,8 +595,11 @@ static PF_Err Render(
 	PF_LayerDef* output)
 {
 	// Start Render
+
 	// Cleanup
-	in_data->utils->fill(in_data->effect_ref, nullptr, nullptr, output);
+
+	PF_PROGRESS(in_data, 0, 4);
+	PF_FILL(nullptr, nullptr, output);
 
 	if (!out_data->sequence_data || PF_GET_HANDLE_SIZE(out_data->sequence_data) != sizeof(SequenceData))
 		return
@@ -610,11 +613,6 @@ static PF_Err Render(
 
 	try
 	{
-		// Cleanup
-
-		PF_PROGRESS(in_data, 0, 4);
-		//CleanupWorld(output);
-
 		// Check Render Switch
 
 		if (!static_cast<bool>(params[R_SUBLIGHT_CLASSIC_PARAMS_RENDER]->u.bd.value)) return PF_Err_NONE;
