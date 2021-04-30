@@ -104,7 +104,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -162,7 +162,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <PreprocessorDefinitions>MSWindows;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -211,12 +211,14 @@
     <ResourceCompile Include="SubLight.Classic.PiPL.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sublight.Charset.h" />
     <ClInclude Include="SubLight.Classic.h" />
     <ClInclude Include="SubLight.Classic.Strings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AEResources\Util\AEGP_SuiteHandler.cpp" />
     <ClCompile Include="..\AEResources\Util\MissingSuiteError.cpp" />
+    <ClCompile Include="Sublight.Charset.cpp" />
     <ClCompile Include="SubLight.Classic.Blend.cpp" />
     <ClCompile Include="SubLight.Classic.cpp" />
     <ClCompile Include="SubLight.Classic.Strings.cpp" />

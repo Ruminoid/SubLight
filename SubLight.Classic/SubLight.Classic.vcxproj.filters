@@ -30,12 +30,18 @@
     <ClCompile Include="SubLight.Classic.Blend.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Sublight.Charset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SubLight.Classic.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SubLight.Classic.Strings.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sublight.Charset.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
