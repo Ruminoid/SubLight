@@ -56,9 +56,9 @@ void BlendSingle(
 
 #define	MAJOR_VERSION	0
 #define	MINOR_VERSION	2
-#define	BUG_VERSION		7
+#define	BUG_VERSION		8
 #define	STAGE_VERSION	PF_Stage_BETA
-#define	BUILD_VERSION	10
+#define	BUILD_VERSION	11
 
 enum
 {
