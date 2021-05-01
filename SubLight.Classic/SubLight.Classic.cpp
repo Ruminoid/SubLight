@@ -1,11 +1,11 @@
 #include "SubLight.Classic.h"
+#include "Sublight.Charset.h"
 
 #include <atlstr.h>
 #include <ShObjIdl.h>
 #include <cstdio>
 #include <wchar.h>
 #include <Windows.h>
-#include <string>
 
 #pragma region Add Windows Controls
 
@@ -528,26 +528,30 @@ UserChangedParam(
 		// Read File
 
 		FILE* fp;
-		const errno_t fille_open_result = _wfopen_s(&fp, file_path, L"r");
+		const errno_t fille_open_result = _wfopen_s(&fp, file_path, L"rb");
 		if (fille_open_result) return PF_Err_NONE;
 		//delete[] file_path;
 
 		if (fp == nullptr) return PF_Err_NONE;
 		fseek(fp, 0, SEEK_END);
 
-		const int len = ftell(fp);
+		int len = ftell(fp);
 		char* data_string = new char[len];
 
-		fseek(fp, 0, SEEK_SET);
-		fread(data_string, len, 1, fp);
+		rewind(fp);
+		size_t readSize = fread(data_string, sizeof(char), len, fp);
+		if (readSize != len)
+			printf("What the fuck");
 		fclose(fp);
 
 		// Check ASS File
 
-		if (*data_string != '[')
+		auto reencodedString = ConvertToUTF8(std::string_view(data_string, len));
+		if (reencodedString.first != nullptr)
 		{
 			delete[] data_string;
-			return PF_Err_NONE;
+			data_string = reencodedString.first;
+			len = reencodedString.second;
 		}
 
 		// Replace ASS Track

@@ -1,5 +1,7 @@
 [requires]
 libass/0.14.0@charliejiang/stable
+uchardet/0.0.6@charliejiang/stable
+libiconv/1.16
 
 [generators]
 visual_studio
